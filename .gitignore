@@ -46,7 +46,6 @@ Thumbs.db
 # Binaries — Windows development only (not needed on Vercel/Linux)
 ffmpeg.exe
 yt-dlp.exe
-yt-dlp.exe.old
 
 # Large archives (extracted binaries are committed directly)
 *.tar.xz
