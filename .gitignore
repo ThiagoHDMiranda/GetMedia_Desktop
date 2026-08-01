@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+.DS_Store
+*.pid
+*.pid.lock
+
+# Coverage
+coverage
+*.lcov
+.nyc_output
+
+# Dependencies
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite (build output)
+dist/
+
+# Electron
+dist-electron/
+release/
+
+# Cache
+.cache
+.npm
+.eslintcache
+
+# OS
+Thumbs.db
+
+# Binaries — Windows development only (not needed on Vercel/Linux)
+ffmpeg.exe
+yt-dlp.exe
+yt-dlp.exe.old
+
+# Large archives (extracted binaries are committed directly)
+*.tar.xz

@@ -1,0 +1,116 @@
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
+
+export type UpdaterStatus =
+  | "idle"
+  | "checking"
+  | "available"
+  | "not-available"
+  | "downloading"
+  | "downloaded"
+  | "error";
+
+export interface UseUpdaterReturn {
+  status: UpdaterStatus;
+  /** Version string of the available update (e.g. "2.0.0"). */
+  updateVersion: string | null;
+  /** Download progress percentage (0–100), only valid when status === "downloading". */
+  progress: number;
+  /** Error message when status === "error". */
+  errorMessage: string | null;
+  /** Explicitly check for updates. */
+  checkForUpdates: () => Promise<void>;
+  /** Start downloading the available update. */
+  downloadUpdate: () => Promise<void>;
+  /** Quit the app and install the downloaded update. */
+  quitAndInstall: () => void;
+}
+
+export function useUpdater(): UseUpdaterReturn {
+  const { t } = useTranslation();
+  const [status, setStatus] = useState<UpdaterStatus>("idle");
+  const [updateVersion, setUpdateVersion] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const listenersRef = useRef(false);
+
+  // Register IPC listeners once.
+  useEffect(() => {
+    const api = window.electronAPI;
+    if (!api) return;
+    if (listenersRef.current) return;
+    listenersRef.current = true;
+
+    api.onUpdateAvailable((info: any) => {
+      setUpdateVersion(info?.version ?? null);
+      setStatus("available");
+    });
+
+    api.onUpdateNotAvailable(() => {
+      setStatus("not-available");
+    });
+
+    api.onUpdateProgress((p: any) => {
+      setStatus("downloading");
+      setProgress(p?.percent ?? 0);
+    });
+
+    api.onUpdateDownloaded((info: any) => {
+      setUpdateVersion(info?.version ?? updateVersion);
+      setStatus("downloaded");
+      setProgress(100);
+    });
+
+    api.onUpdateError((msg: string) => {
+      setStatus("error");
+      setErrorMessage(msg);
+    });
+
+    return () => {
+      api.removeUpdateListeners();
+      listenersRef.current = false;
+    };
+  }, [t]);
+
+  const checkForUpdates = useCallback(async () => {
+    const api = window.electronAPI;
+    if (!api) return;
+    setStatus("checking");
+    setErrorMessage(null);
+    try {
+      await api.checkForUpdates();
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMessage(err?.message ?? t("errors.unknown"));
+    }
+  }, [t]);
+
+  const downloadUpdate = useCallback(async () => {
+    const api = window.electronAPI;
+    if (!api) return;
+    setStatus("downloading");
+    setErrorMessage(null);
+    try {
+      await api.downloadUpdate();
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMessage(err?.message ?? t("errors.unknown"));
+    }
+  }, [t]);
+
+  const quitAndInstall = useCallback(() => {
+    const api = window.electronAPI;
+    if (!api) return;
+    api.quitAndInstall();
+  }, []);
+
+  return {
+    status,
+    updateVersion,
+    progress,
+    errorMessage,
+    checkForUpdates,
+    downloadUpdate,
+    quitAndInstall,
+  };
+}

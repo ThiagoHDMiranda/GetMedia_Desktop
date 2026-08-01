@@ -1,0 +1,83 @@
+{
+  "name": "getmedia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Download videos and audio from YouTube and other platforms",
+  "author": {
+    "name": "ThiagoHDMiranda",
+    "email": "thiagohdmiranda77@gmail.com"
+  },
+  "license": "MIT",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "tsc -p electron/tsconfig.json && electron .",
+    "preview": "vite preview",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:3001 && cross-env ELECTRON_DEV=1 electron .\"",
+    "electron:compile": "tsc -p electron/tsconfig.json",
+    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder --win",
+    "release": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "i18next": "^26.3.6",
+    "lucide-react": "^1.27.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-i18next": "^17.0.11",
+    "typed.js": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.0",
+    "png-to-ico": "^3.0.2",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "wait-on": "^9.0.0"
+  },
+
+  "build": {
+    "appId": "com.thiagohdmiranda.getmedia",
+    "productName": "GetMedia",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "dist/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "yt-dlp.exe",
+        "to": "binaries/yt-dlp.exe"
+      },
+      {
+        "from": "ffmpeg.exe",
+        "to": "binaries/ffmpeg.exe"
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "ThiagoHDMiranda",
+      "repo": "GetMedia"
+    },
+    "win": {
+      "icon": "public/getmedia_icon_256x256.ico",
+      "target": "portable"
+    }
+  }
+}
