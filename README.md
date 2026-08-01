@@ -13,9 +13,9 @@ A desktop application for downloading videos and audio from YouTube and other pl
 
 ## Download
 
-Download the latest version from the [Releases page](https://github.com/ThiagoHDMiranda/GetMedia/releases/latest):
+Download the latest version from the [Releases page](https://github.com/ThiagoHDMiranda/GetMedia_Desktop/releases/latest):
 
-1. Go to [Releases](https://github.com/ThiagoHDMiranda/GetMedia/releases/latest)
+1. Go to [Releases](https://github.com/ThiagoHDMiranda/GetMedia_Desktop/releases/latest)
 2. Download the `.exe` file from the latest release
 3. Run it — no installation required (portable)
 
