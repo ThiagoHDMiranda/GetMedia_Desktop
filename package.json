@@ -73,7 +73,7 @@
     "publish": {
       "provider": "github",
       "owner": "ThiagoHDMiranda",
-      "repo": "GetMedia"
+      "repo": "GetMedia_Desktop"
     },
     "win": {
       "icon": "public/getmedia_icon_256x256.ico",

@@ -49,3 +49,7 @@ yt-dlp.exe
 
 # Large archives (extracted binaries are committed directly)
 *.tar.xz
+
+# Tasks and TODOs
+tasks.md
+TODO.md
