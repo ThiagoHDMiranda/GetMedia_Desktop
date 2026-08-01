@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:3001 && cross-env ELECTRON_DEV=1 electron .\"",
     "electron:compile": "tsc -p electron/tsconfig.json",
-    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder --win",
+    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish never",
     "release": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish always"
   },
   "dependencies": {
@@ -68,6 +68,10 @@
       {
         "from": "ffmpeg.exe",
         "to": "binaries/ffmpeg.exe"
+      },
+      {
+        "from": "build/app-update.yml",
+        "to": "app-update.yml"
       }
     ],
     "publish": {

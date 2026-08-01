@@ -19,6 +19,9 @@ import {
   historyUpdate as bridgeHistoryUpdate,
 } from "@/lib/desktop-bridge";
 import { useUpdater } from "@/hooks/useUpdater";
+// Import images so Vite bundles them with correct relative paths (works in production Electron)
+import iconUrl from "@/assets/getmedia_icon_512x512.png";
+import logoUrl from "@/assets/getmedia.png";
 
 export default function App() {
   const { t } = useTranslation();
@@ -203,9 +206,9 @@ export default function App() {
         <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-brand-600/10 blur-3xl animate-pulse-slow" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-brand-400/8 blur-3xl animate-pulse-slow animate-delay-200" />
       </div>
-      <div className="absolute top-6 place-self-center flex items-center justify-center gap-2">
-          <img src={"/getmedia_icon_512x512.png"} className="w-auto h-8 relative top-0.5" />
-          <img src={"/getmedia.png"} className="w-auto h-10" />
+      <div className="w-full absolute top-6 place-self-center flex items-center justify-center gap-2">
+          <img src={iconUrl} className="w-auto h-8 relative top-0.5" />
+          <img src={logoUrl} className="w-auto h-10" />
         </div>
       <div className="mx-auto max-w-5xl px-4 py-12 space-y-12 relative">
         {/* Top-bar buttons — fixed right cluster (History + About + Settings) */}

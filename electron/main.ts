@@ -27,6 +27,13 @@ const isDev = process.env.NODE_ENV === "development" || !!process.env.ELECTRON_D
 // Disable auto-download — the renderer decides when to download.
 autoUpdater.autoDownload = false;
 
+// Portable builds don't generate app-update.yml, so set the repo config explicitly.
+autoUpdater.setFeedURL({
+  provider: "github",
+  owner: "ThiagoHDMiranda",
+  repo: "GetMedia_Desktop",
+});
+
 let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow(): BrowserWindow {
