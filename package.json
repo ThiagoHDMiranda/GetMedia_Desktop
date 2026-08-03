@@ -68,10 +68,6 @@
       {
         "from": "ffmpeg.exe",
         "to": "binaries/ffmpeg.exe"
-      },
-      {
-        "from": "build/app-update.yml",
-        "to": "app-update.yml"
       }
     ],
     "publish": {
@@ -81,7 +77,7 @@
     },
     "win": {
       "icon": "public/getmedia_icon_256x256.ico",
-      "target": "portable"
+      "target": "nsis"
     }
   }
 }
