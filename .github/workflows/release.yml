@@ -32,7 +32,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release/GetMedia Setup *.exe
-            release/GetMedia Setup *.exe.blockmap
+            release/GetMedia-Setup-*.exe
+            release/GetMedia-Setup-*.exe.blockmap
             release/latest.yml
           fail_on_unmatched_files: true

@@ -82,6 +82,9 @@
     "win": {
       "icon": "public/getmedia_icon_256x256.ico",
       "target": "nsis"
+    },
+    "nsis": {
+      "artifactName": "GetMedia-Setup-${version}.${ext}"
     }
   }
 }
