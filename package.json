@@ -68,6 +68,10 @@
       {
         "from": "ffmpeg.exe",
         "to": "binaries/ffmpeg.exe"
+      },
+      {
+        "from": "build/app-update.yml",
+        "to": "app-update.yml"
       }
     ],
     "publish": {

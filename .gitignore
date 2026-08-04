@@ -43,9 +43,9 @@ release/
 # OS
 Thumbs.db
 
-# Binaries — Windows development only (not needed on Vercel/Linux)
-ffmpeg.exe
-yt-dlp.exe
+# Binaries — Windows .exe files committed for CI builds (electron-builder needs them)
+# ffmpeg.exe   (~87MB) — bundled as extraResource in the Windows installer
+# yt-dlp.exe   (~18MB) — bundled as extraResource in the Windows installer
 
 # Large archives (extracted binaries are committed directly)
 *.tar.xz
