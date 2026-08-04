@@ -204,7 +204,7 @@ app.whenReady().then(() => {
       autoUpdater.checkForUpdates().catch((err) => {
         console.error("[updater] Startup check failed:", err);
       });
-    }, 30_000);
+    }, 15_000);
   }
 
   app.on("activate", () => {
