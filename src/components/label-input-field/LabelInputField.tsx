@@ -81,7 +81,7 @@ export const LabelInputField: React.FC<LabelInputProps> = ({
           onKeyDown={handleKeyDown}
           className="
             flex-1 bg-surface-muted border border-white/10 rounded-xl
-            px-4 py-3 text-[var(--text-primary)] text-sm
+            px-4 py-3 text-[var(--text-input)] text-sm
             placeholder:text-[var(--text-secondary)]
             focus:outline-none focus:border-brand-500/60 focus:ring-2 focus:ring-brand-500/20
             transition-all duration-200

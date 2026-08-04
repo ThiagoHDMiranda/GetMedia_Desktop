@@ -18,6 +18,7 @@
   /* --text-primary:   #f0f2ff; */
   --text-primary:   #8298b0;
   --text-secondary: #8298b0;
+  --text-input:     #ffffffcc;
   --success:        #22d3a5;
   --warning:        #f59e0b;
   --error:          #f43f5e;
@@ -46,6 +47,7 @@
   --text-primary:   #8298b0;
   /* --text-secondary: #5c6a86; */
   --text-secondary: #8298b0;
+  --text-input:     #000000cc;
   --success:        #15a07a;
   --warning:        #c97500;
   --error:          #d8374c;
