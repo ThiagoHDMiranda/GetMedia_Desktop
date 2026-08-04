@@ -17,7 +17,7 @@
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:3001 && cross-env ELECTRON_DEV=1 electron .\"",
     "electron:compile": "tsc -p electron/tsconfig.json",
     "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish never",
-    "release": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish always"
+    "release": "vite build && tsc -p electron/tsconfig.json && electron-builder --win --publish never"
   },
   "dependencies": {
     "electron-updater": "^6.8.9",

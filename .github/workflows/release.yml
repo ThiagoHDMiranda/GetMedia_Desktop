@@ -25,7 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and publish
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
         run: npm run release
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/GetMedia Setup *.exe
+            release/GetMedia Setup *.exe.blockmap
+            release/latest.yml
+          fail_on_unmatched_files: true
