@@ -64,7 +64,7 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({
   }, []);
 
   return (
-    <div className="fixed top-4 flex w-full justify-center items-center self-center">
+    <div className="fixed z-50 top-4 flex w-full justify-center items-center self-center">
       <div
       ref={toastRef}
       className={`
