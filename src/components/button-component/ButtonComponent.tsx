@@ -21,7 +21,7 @@ const VARIANT_MAP = {
   primary: `
     bg-gradient-to-r from-brand-600 to-brand-500
     hover:from-brand-500 hover:to-brand-400
-    text-white shadow-lg shadow-brand-900/30
+    text-white/80 shadow-lg shadow-brand-900/30
     hover:shadow-brand-600/40 hover:scale-[1.02]
     active:scale-[0.98]
     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100

@@ -96,7 +96,7 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
                     onClick={() => handleThemeChange(th)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-150 ${
                       active
-                        ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                        ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                         : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-brand-400/40 hover:text-[var(--text-primary)]"
                     }`}
                   >
@@ -125,7 +125,7 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
                   onClick={() => handleLanguageChange(lang)}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-150 ${
                     selectedLang === lang
-                      ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                      ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                       : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-brand-400/40 hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -172,7 +172,7 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
                   <button
                     id="update-download-btn"
                     onClick={() => updater.downloadUpdate()}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30 transition-all duration-150 hover:bg-brand-600"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30 transition-all duration-150 hover:bg-brand-600"
                   >
                     <Download className="w-4 h-4" />
                     {t("update.download")}
@@ -208,7 +208,7 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
                   </p>
                   <button
                     onClick={() => updater.quitAndInstall()}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30 transition-all duration-150 hover:bg-brand-600"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30 transition-all duration-150 hover:bg-brand-600"
                   >
                     <RotateCw className="w-4 h-4" />
                     {t("update.restart")}

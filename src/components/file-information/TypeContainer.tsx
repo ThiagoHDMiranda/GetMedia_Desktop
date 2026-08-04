@@ -109,7 +109,7 @@ export const TypeContainer = ({
                 className={`
                   px-3 py-1 rounded-lg text-xs font-semibold border transition-all duration-150
                   ${selectedExt === ext && isActive
-                    ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                    ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                     : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-surface-border hover:text-[var(--text-primary)]"
                   }
                 `}
@@ -133,7 +133,7 @@ export const TypeContainer = ({
                   className={`
                     px-3 py-1 rounded-lg text-xs font-semibold border transition-all duration-150
                     ${selectedQuality === q
-                      ? "bg-brand-500 border-brand-400 text-white"
+                      ? "bg-brand-500 border-brand-400 text-white/80"
                       : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-surface-border"
                     }
                   `}

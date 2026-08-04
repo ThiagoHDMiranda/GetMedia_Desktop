@@ -97,7 +97,7 @@ export function FileInformation({
                   className="w-full h-full object-cover"
                 />
                 {videoInfo.duration && (
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/75 text-white text-xs px-1.5 py-0.5 rounded font-mono">
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/75 text-white/80 text-xs px-1.5 py-0.5 rounded font-mono">
                     {videoInfo.duration}
                   </div>
                 )}

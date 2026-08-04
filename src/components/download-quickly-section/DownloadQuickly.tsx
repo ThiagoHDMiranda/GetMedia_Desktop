@@ -149,7 +149,7 @@ export function DownloadQuickly({
             id="type-audio-btn"
             onClick={() => changeType("audio")}
             className={`flex items-center relative z-10 px-5 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
-              isAudio ? "text-white" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              isAudio ? "text-white/80" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
             <Music className="w-4 h-4 inline mr-1.5" />
@@ -160,7 +160,7 @@ export function DownloadQuickly({
             id="type-video-btn"
             onClick={() => changeType("video")}
             className={`flex items-center relative z-10 px-5 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
-              !isAudio ? "text-white" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              !isAudio ? "text-white/80" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
             <Video className="w-4 h-4 inline mr-1.5" />
@@ -262,7 +262,7 @@ export function DownloadQuickly({
                     onClick={() => changeDefaultExt(ext)}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all duration-150 ${
                       defaultConfig.extension === ext
-                        ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                        ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                         : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-surface-border hover:text-[var(--text-primary)]"
                     }`}
                   >
@@ -282,7 +282,7 @@ export function DownloadQuickly({
                   onClick={() => changeDefaultQuality("")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all duration-150 ${
                     !defaultConfig.quality
-                      ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                      ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                       : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-surface-border hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -295,7 +295,7 @@ export function DownloadQuickly({
                     onClick={() => changeDefaultQuality(q)}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all duration-150 ${
                       defaultConfig.quality === q
-                        ? "bg-brand-500 border-brand-400 text-white shadow-sm shadow-brand-900/30"
+                        ? "bg-brand-500 border-brand-400 text-white/80 shadow-sm shadow-brand-900/30"
                         : "bg-surface-muted border-surface-border text-[var(--text-secondary)] hover:border-surface-border hover:text-[var(--text-primary)]"
                     }`}
                   >
