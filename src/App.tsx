@@ -207,7 +207,7 @@ export default function App() {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-brand-400/8 blur-3xl animate-pulse-slow animate-delay-200" />
       </div>
       <div className="w-full absolute top-6 place-self-center flex items-center justify-center gap-2">
-          <img src={iconUrl} className="w-auto h-8 relative top-0.5" />
+          <img src={iconUrl} className="w-auto h-10" />
           <img src={logoUrl} className="w-auto h-10" />
         </div>
       <div className="mx-auto max-w-5xl px-4 py-12 space-y-12 relative">
