@@ -48,6 +48,10 @@ export function useUpdater(): UseUpdaterReturn {
 
     api.onUpdateNotAvailable(() => {
       setStatus("not-available");
+      // Reset back to "idle" after 30 seconds so the user can check again.
+      setTimeout(() => {
+        setStatus("idle");
+      }, 30_000);
     });
 
     api.onUpdateProgress((p: any) => {
