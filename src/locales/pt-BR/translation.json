@@ -133,7 +133,7 @@
     "downloading": "Baixando atualização: {{progress}}%",
     "downloaded": "Baixado — reinicie para instalar",
     "restart": "Reiniciar agora",
-    "failed": "Falha na atualização",
-    "error": "Erro ao verificar atualização"
+    "failed": "Erro ao verificar atualização",
+    "initial": "Verificar atualizações"
   }
 }
