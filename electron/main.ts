@@ -17,6 +17,8 @@
 
 import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
 import path from "node:path";
+import os from "node:os";
+import fs from "node:fs";
 import { autoUpdater } from "electron-updater";
 import { getVideoInfo, downloadMedia } from "./lib/ytdlp";
 import { getDownloadFolder, setDownloadFolder } from "./lib/config";
@@ -195,7 +197,34 @@ ipcMain.handle("updater:quit-and-install", () => {
 
 // ── App lifecycle ──────────────────────────────────────────────────────────
 
+/**
+ * Scans the OS temp directory for leftover `GetMedia_*` folders from
+ * crashed or interrupted downloads and removes them.
+ */
+function cleanupLeftoverTempFolders(): void {
+  const tmpDir = os.tmpdir();
+  try {
+    const entries = fs.readdirSync(tmpDir);
+    for (const entry of entries) {
+      if (entry.startsWith("GetMedia_")) {
+        const fullPath = path.join(tmpDir, entry);
+        try {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+          console.log(`[startup] Cleaned up leftover temp folder: ${entry}`);
+        } catch (err) {
+          console.warn(`[startup] Failed to clean up temp folder: ${entry}`, err);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("[startup] Failed to scan temp directory for leftovers:", err);
+  }
+}
+
 app.whenReady().then(() => {
+  // Clean up any leftover temp folders from crashed/interrupted downloads
+  cleanupLeftoverTempFolders();
+
   createMainWindow();
 
   // Check for updates after a short delay so the renderer is ready.

@@ -208,6 +208,18 @@ export function getVideoInfo(rawUrl: string): Promise<InfoResult> {
 //   type: "audio" | "video";
 //   extension?: string;
 //   quality?: string;
+/**
+ * Recursively deletes a directory and all its contents.
+ * Used to clean up the temp folder after a download completes (success or failure).
+ */
+function cleanupTempDir(dir: string): void {
+  try {
+    fs.rmSync(dir, { recursive: true, force: true });
+  } catch (err) {
+    console.warn("[download] Failed to clean up temp directory:", dir, err);
+  }
+}
+
 export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
   return new Promise((resolve) => {
     const url = sanitizeUrl(opts.url || "");
@@ -228,7 +240,20 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
 
     // Use the user's configured download directory (defaults to OS Downloads)
     const downloadsDir = getDownloadFolder();
-    const outputTemplate = path.join(downloadsDir, "%(title)s.%(ext)s");
+
+    // Create a unique temp folder inside the OS temp directory.
+    // All yt-dlp operations (download, merge, recode) happen inside this folder
+    // so intermediate files (.f###, .temp, etc.) never pollute the download dir.
+    const tempDir = path.join(os.tmpdir(), `GetMedia_${Date.now()}`);
+    try {
+      fs.mkdirSync(tempDir, { recursive: true });
+    } catch (mkdirErr) {
+      console.error("[download] Failed to create temp directory:", mkdirErr);
+      resolve({ error: "errors.serverError", status: 500 });
+      return;
+    }
+
+    const outputTemplate = path.join(tempDir, "%(title)s.%(ext)s");
 
     const args: string[] = [
       ...buildCommonArgs(),
@@ -282,6 +307,8 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
         "\nPath:",
         ytDlpPath,
       );
+      // Clean up temp folder on spawn failure
+      cleanupTempDir(tempDir);
       resolve({ error: binaryErrorMessage(), status: 500 });
     });
 
@@ -290,27 +317,39 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
         console.error(`[download] yt-dlp exited with code ${code}`);
         console.error(`[download] yt-dlp args:`, args);
         console.error(`[download] Full stderr:`, errorBuffer || "(empty)");
+        // Clean up temp folder on download failure
+        cleanupTempDir(tempDir);
         const { message, status } = parseYtDlpError(errorBuffer, "download");
         resolve({ error: message, status });
         return;
       }
 
       try {
-        // yt-dlp writes the final filename to the last stdout line containing
-        // "[download] Destination: " or the final "Merger" line. Instead, we
-        // list the Downloads files that match our template's extension and
-        // pick the most recently modified one as a best-effort match.
+        // Find the final output file in the temp directory.
+        // yt-dlp produces the final file with the requested extension,
+        // while intermediate files have extensions like .f160, .f251, .temp, etc.
         const files = fs
-          .readdirSync(downloadsDir)
+          .readdirSync(tempDir)
           .map((name) => {
-            const full = path.join(downloadsDir, name);
+            const full = path.join(tempDir, name);
             const stat = fs.statSync(full);
-            return { name, full, mtime: stat.mtimeMs };
+            return { name, full, mtime: stat.mtimeMs, size: stat.size };
           })
           .filter((f) => path.extname(f.name).slice(1).toLowerCase() === ext)
           .sort((a, b) => b.mtime - a.mtime);
 
         if (files.length === 0) {
+          console.error(
+            "[download] No output file with extension",
+            ext,
+            "found in temp dir:",
+            tempDir,
+          );
+          console.error(
+            "[download] Files in temp dir:",
+            fs.readdirSync(tempDir),
+          );
+          cleanupTempDir(tempDir);
           resolve({
             error: "errors.serverError",
             status: 500,
@@ -320,25 +359,31 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
 
         const latest = files[0];
 
-        // Best-effort: read file size for the history entry. Non-fatal if it
-        // fails (e.g. file got moved/deleted between listing and stat).
-        let fileSize: number | null = null;
+        // Move the final file to the user's download directory.
+        // Use copy+delete instead of rename because rename fails with EXDEV
+        // when the temp dir and download dir are on different drives.
+        const finalPath = path.join(downloadsDir, latest.name);
         try {
-          fileSize = fs.statSync(latest.full).size;
-        } catch (statErr) {
-          console.warn(
-            "[download] Failed to stat downloaded file (continuing without size):",
-            statErr,
-          );
+          fs.copyFileSync(latest.full, finalPath);
+          fs.unlinkSync(latest.full);
+        } catch (moveErr) {
+          console.error("[download] Failed to move file to download dir:", moveErr);
+          cleanupTempDir(tempDir);
+          resolve({ error: "errors.serverError", status: 500 });
+          return;
         }
 
+        // Clean up the temp folder (removes all intermediate files)
+        cleanupTempDir(tempDir);
+
         resolve({
-          filePath: latest.full,
+          filePath: finalPath,
           filename: latest.name,
-          fileSize,
+          fileSize: latest.size,
         });
       } catch (err) {
         console.error("[download] Failed to process download output:", err);
+        cleanupTempDir(tempDir);
         resolve({
           error: "errors.serverError",
           status: 500,
