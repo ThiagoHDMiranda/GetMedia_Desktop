@@ -10,7 +10,7 @@ import pkg from "@pkg";
 export const APP_INFO = {
   name: (pkg as any).build?.productName ?? pkg.name,
   version: pkg.version,
-  author: pkg.author?.name ?? "Thiago Miranda",
+  author: "Thiago Miranda",
   authorEmail: pkg.author?.email ?? "",
   license: pkg.license ?? "MIT",
   description: pkg.description ?? "",
