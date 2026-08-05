@@ -221,12 +221,13 @@ function cleanupTempDir(dir: string): void {
 }
 
 export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const url = sanitizeUrl(opts.url || "");
     if (!url) {
       resolve({ error: "URL é obrigatória", status: 400 });
       return;
     }
+    const validatedUrl = url;
 
     const ytDlpPath = getYtDlpPath();
     const ffmpegPath = getFfmpegPath();
@@ -255,140 +256,218 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
 
     const outputTemplate = path.join(tempDir, "%(title)s.%(ext)s");
 
-    const args: string[] = [
-      ...buildCommonArgs(),
-      "--ffmpeg-location",
-      ffmpegPath,
-      "-o",
-      outputTemplate,
-      "--newline",
-    ];
+    // ── Build yt-dlp argument sets ──────────────────────────────────────────
 
-    if (opts.type === "audio") {
+    function buildBaseArgs(): string[] {
+      return [
+        ...buildCommonArgs(),
+        "--ffmpeg-location",
+        ffmpegPath,
+        "-o",
+        outputTemplate,
+        "--newline",
+      ];
+    }
+
+    function buildAudioArgs(): string[] {
+      const args = buildBaseArgs();
       args.push("-x", "--audio-format", ext);
       if (opts.quality) args.push("--audio-quality", opts.quality);
-    } else {
-      if (opts.quality) {
-        const height = opts.quality.replace("p", "");
+      args.push(validatedUrl);
+      return args;
+    }
+
+    function buildVideoArgs(useWebmNative: boolean): string[] {
+      const args = buildBaseArgs();
+      const height = opts.quality?.replace("p", "");
+
+      if (useWebmNative && ext === "webm") {
+        // WebM-native: prefer WebM streams so we can losslessly merge
         args.push(
           "-f",
-          `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`,
+          height
+            ? `bestvideo[ext=webm][height<=${height}]+bestaudio[ext=webm]/bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            : `bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo+bestaudio/best`,
         );
+        args.push("--merge-output-format", ext);
+      } else if (ext === "webm") {
+        // Fallback for WebM: download any format, then recode to WebM
+        args.push(
+          "-f",
+          height
+            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            : `bestvideo+bestaudio/best`,
+        );
+        args.push("--recode-video", ext);
       } else {
-        args.push("-f", "bestvideo+bestaudio/best");
-      }
-
-      if (opts.extension) {
-        const isNativeFormat = ext === "mp4" || ext === "webm";
+        // Non-WebM formats
+        args.push(
+          "-f",
+          height
+            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            : `bestvideo+bestaudio/best`,
+        );
+        const isNativeFormat = ext === "mp4";
         if (isNativeFormat) {
           args.push("--merge-output-format", ext);
         } else {
           args.push("--recode-video", ext);
         }
       }
+
+      args.push(validatedUrl);
+      return args;
     }
 
-    args.push(url);
+    // ── Run yt-dlp ──────────────────────────────────────────────────────────
 
-    let errorBuffer = "";
+    /**
+     * Spawns yt-dlp with the given args, collects stderr, and returns
+     * the exit code and error buffer.
+     */
+    function runYtDlp(args: string[]): Promise<{ code: number | null; errorBuffer: string }> {
+      return new Promise((runResolve) => {
+        let errorBuffer = "";
 
-    const proc = spawn(ytDlpPath, args, {
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+        const proc = spawn(ytDlpPath, args, {
+          stdio: ["ignore", "pipe", "pipe"],
+        });
 
-    proc.stderr.on("data", (chunk: Buffer) => {
-      errorBuffer += chunk.toString();
-    });
+        proc.stderr.on("data", (chunk: Buffer) => {
+          errorBuffer += chunk.toString();
+        });
 
-    proc.on("error", (err) => {
-      console.error(
-        "[download] Failed to spawn yt-dlp:",
-        err.message,
-        "\nPath:",
-        ytDlpPath,
-      );
-      // Clean up temp folder on spawn failure
+        proc.on("error", (err) => {
+          console.error(
+            "[download] Failed to spawn yt-dlp:",
+            err.message,
+            "\nPath:",
+            ytDlpPath,
+          );
+          runResolve({ code: null, errorBuffer });
+        });
+
+        proc.on("close", (code) => {
+          runResolve({ code, errorBuffer });
+        });
+      });
+    }
+
+    // ── Execution ───────────────────────────────────────────────────────────
+
+    const isWebmVideo = opts.type === "video" && ext === "webm";
+    let result: { code: number | null; errorBuffer: string };
+
+    if (opts.type === "audio") {
+      result = await runYtDlp(buildAudioArgs());
+    } else if (isWebmVideo) {
+      // Try native WebM first (fast, lossless merge)
+      console.log("[download] Trying native WebM format...");
+      result = await runYtDlp(buildVideoArgs(true));
+
+      if (result.code !== 0) {
+        // Fall back to recode (slower, but always works)
+        console.log("[download] Native WebM failed, falling back to recode...");
+        console.error(`[download] First attempt stderr:`, result.errorBuffer || "(empty)");
+
+        // Clean up any partial files from the first attempt
+        cleanupTempDir(tempDir);
+        try {
+          fs.mkdirSync(tempDir, { recursive: true });
+        } catch {
+          // Ignore — the original dir still exists if cleanup failed
+        }
+
+        result = await runYtDlp(buildVideoArgs(false));
+      }
+    } else {
+      result = await runYtDlp(buildVideoArgs(false));
+    }
+
+    // ── Process result ──────────────────────────────────────────────────────
+
+    const { code, errorBuffer } = result;
+
+    if (code !== 0 && code !== null) {
+      console.error(`[download] yt-dlp exited with code ${code}`);
+      console.error(`[download] Full stderr:`, errorBuffer || "(empty)");
+      cleanupTempDir(tempDir);
+      const { message, status } = parseYtDlpError(errorBuffer, "download");
+      resolve({ error: message, status });
+      return;
+    }
+
+    if (code === null) {
+      // Spawn failed
       cleanupTempDir(tempDir);
       resolve({ error: binaryErrorMessage(), status: 500 });
-    });
+      return;
+    }
 
-    proc.on("close", (code) => {
-      if (code !== 0) {
-        console.error(`[download] yt-dlp exited with code ${code}`);
-        console.error(`[download] yt-dlp args:`, args);
-        console.error(`[download] Full stderr:`, errorBuffer || "(empty)");
-        // Clean up temp folder on download failure
-        cleanupTempDir(tempDir);
-        const { message, status } = parseYtDlpError(errorBuffer, "download");
-        resolve({ error: message, status });
-        return;
-      }
+    try {
+      // Find the final output file in the temp directory.
+      // yt-dlp produces the final file with the requested extension,
+      // while intermediate files have extensions like .f160, .f251, .temp, etc.
+      const files = fs
+        .readdirSync(tempDir)
+        .map((name) => {
+          const full = path.join(tempDir, name);
+          const stat = fs.statSync(full);
+          return { name, full, mtime: stat.mtimeMs, size: stat.size };
+        })
+        .filter((f) => path.extname(f.name).slice(1).toLowerCase() === ext)
+        .sort((a, b) => b.mtime - a.mtime);
 
-      try {
-        // Find the final output file in the temp directory.
-        // yt-dlp produces the final file with the requested extension,
-        // while intermediate files have extensions like .f160, .f251, .temp, etc.
-        const files = fs
-          .readdirSync(tempDir)
-          .map((name) => {
-            const full = path.join(tempDir, name);
-            const stat = fs.statSync(full);
-            return { name, full, mtime: stat.mtimeMs, size: stat.size };
-          })
-          .filter((f) => path.extname(f.name).slice(1).toLowerCase() === ext)
-          .sort((a, b) => b.mtime - a.mtime);
-
-        if (files.length === 0) {
-          console.error(
-            "[download] No output file with extension",
-            ext,
-            "found in temp dir:",
-            tempDir,
-          );
-          console.error(
-            "[download] Files in temp dir:",
-            fs.readdirSync(tempDir),
-          );
-          cleanupTempDir(tempDir);
-          resolve({
-            error: "errors.serverError",
-            status: 500,
-          });
-          return;
-        }
-
-        const latest = files[0];
-
-        // Move the final file to the user's download directory.
-        // Use copy+delete instead of rename because rename fails with EXDEV
-        // when the temp dir and download dir are on different drives.
-        const finalPath = path.join(downloadsDir, latest.name);
-        try {
-          fs.copyFileSync(latest.full, finalPath);
-          fs.unlinkSync(latest.full);
-        } catch (moveErr) {
-          console.error("[download] Failed to move file to download dir:", moveErr);
-          cleanupTempDir(tempDir);
-          resolve({ error: "errors.serverError", status: 500 });
-          return;
-        }
-
-        // Clean up the temp folder (removes all intermediate files)
-        cleanupTempDir(tempDir);
-
-        resolve({
-          filePath: finalPath,
-          filename: latest.name,
-          fileSize: latest.size,
-        });
-      } catch (err) {
-        console.error("[download] Failed to process download output:", err);
+      if (files.length === 0) {
+        console.error(
+          "[download] No output file with extension",
+          ext,
+          "found in temp dir:",
+          tempDir,
+        );
+        console.error(
+          "[download] Files in temp dir:",
+          fs.readdirSync(tempDir),
+        );
         cleanupTempDir(tempDir);
         resolve({
           error: "errors.serverError",
           status: 500,
         });
+        return;
       }
-    });
+
+      const latest = files[0];
+
+      // Move the final file to the user's download directory.
+      // Use copy+delete instead of rename because rename fails with EXDEV
+      // when the temp dir and download dir are on different drives.
+      const finalPath = path.join(downloadsDir, latest.name);
+      try {
+        fs.copyFileSync(latest.full, finalPath);
+        fs.unlinkSync(latest.full);
+      } catch (moveErr) {
+        console.error("[download] Failed to move file to download dir:", moveErr);
+        cleanupTempDir(tempDir);
+        resolve({ error: "errors.serverError", status: 500 });
+        return;
+      }
+
+      // Clean up the temp folder (removes all intermediate files)
+      cleanupTempDir(tempDir);
+
+      resolve({
+        filePath: finalPath,
+        filename: latest.name,
+        fileSize: latest.size,
+      });
+    } catch (err) {
+      console.error("[download] Failed to process download output:", err);
+      cleanupTempDir(tempDir);
+      resolve({
+        error: "errors.serverError",
+        status: 500,
+      });
+    }
   });
 }
