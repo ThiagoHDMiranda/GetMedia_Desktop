@@ -10,7 +10,7 @@
   "download": {
     "audio": "Áudio",
     "configAuto": "Automática",
-    "configAutoDescription": "Se a qualidade não estiver disponível, o yt-dlp usará a melhor disponível automaticamente.",
+    "configAutoDescription": "Se a qualidade não estiver disponível, GetMedia usará a melhor disponível automaticamente.",
     "configFormat": "Formato padrão",
     "configNote": "Essas configurações serão usadas nos downloads rápidos.",
     "configQuality": "Qualidade padrão",
