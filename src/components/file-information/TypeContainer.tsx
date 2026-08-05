@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { FileDownloadType } from "@/types/file-download-type";
+import { useTranslation } from "react-i18next";
+import { Music, Video } from "lucide-react";
 
 interface TypeContainerProps {
   typeFile: "audio" | "video";
@@ -16,8 +18,8 @@ export const TypeContainer = ({
   currentType,
   onClick,
 }: TypeContainerProps) => {
+  const { t } = useTranslation();
   const isActive = currentType.type === typeFile;
-  const typeLabel = typeFile === "audio" ? "🎵 Áudio" : "🎬 Vídeo";
 
   const [selectedExt, setSelectedExt] = useState<string>(
     typeFile === "audio" ? "MP3" : "MP4"
@@ -84,9 +86,12 @@ export const TypeContainer = ({
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 pb-3">
-        <span className={`font-semibold text-sm ${isActive ? "text-brand-300" : "text-[var(--text-secondary)]"}`}>
-          {typeLabel}
-        </span>
+        <div className={`font-semibold text-sm ${isActive ? "text-brand-300" : "text-[var(--text-secondary)]"}`}>
+          {typeFile === "audio" ? 
+          <span className="flex items-center justify-center"><Music className="w-4 h-4 inline mr-1.5" />{t("fileInfo.typeAudio")}</span>: 
+          <span className="flex items-center justify-center"><Video className="w-4 h-4 inline mr-1.5" />{t("fileInfo.typeVideo")}</span>
+          }
+        </div>
         {isActive && (
           <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
         )}
@@ -99,7 +104,7 @@ export const TypeContainer = ({
       >
         {/* Extension buttons */}
         <div className="px-4 space-y-2">
-          <p className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-wider">Formato</p>
+          <p className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-wider">{t("fileInfo.format")}</p>
           <div className="flex flex-wrap gap-2">
             {extensionType.map((ext) => (
               <button
@@ -123,7 +128,7 @@ export const TypeContainer = ({
         {/* Quality (if available) */}
         {qualityFile && qualityFile.length > 0 && (
           <div className="px-4 mt-3 space-y-2">
-            <p className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-wider">Qualidade</p>
+            <p className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-wider">{t("fileInfo.quality")}</p>
             <div className="flex flex-wrap gap-2">
               {qualityFile.map((q) => (
                 <button
