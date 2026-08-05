@@ -1,6 +1,8 @@
 import { X, Info, Scale, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { APP_INFO } from "@/lib/app-info";
+import iconUrl from "@/assets/getmedia_icon_512x512.png";
+import logoUrl from "@/assets/getmedia.png";
 
 interface AboutModalProps {
   isOpen: boolean;
@@ -58,9 +60,10 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <div className="px-6 py-6 space-y-5">
           {/* App identity */}
           <div className="text-center space-y-1">
-            <h3 className="text-2xl font-extrabold text-gradient">
-              {APP_INFO.name}
-            </h3>
+            <div className="w-full place-self-center flex items-center justify-center gap-2 mb-3">
+              <img src={iconUrl} className="w-auto h-6" />
+              <img src={logoUrl} className="w-auto h-6" />
+            </div>
             <p className="text-sm text-[var(--text-secondary)]">
               {t("about.version")} {APP_INFO.version}
             </p>
