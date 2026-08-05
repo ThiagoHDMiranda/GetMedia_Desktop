@@ -22,7 +22,13 @@ import fs from "node:fs";
 import { autoUpdater } from "electron-updater";
 import { getVideoInfo, downloadMedia } from "./lib/ytdlp";
 import { getDownloadFolder, setDownloadFolder } from "./lib/config";
+import { setupFileLogger, getLogFilePath } from "./lib/logger";
 import * as history from "./lib/history";
+
+// Set up file logging as early as possible — captures all console output
+// (log, error, warn, info) plus uncaught exceptions to a file so we can
+// debug issues in production where there's no terminal.
+setupFileLogger();
 
 const isDev = process.env.NODE_ENV === "development" || !!process.env.ELECTRON_DEV;
 
@@ -71,7 +77,6 @@ function createMainWindow(): BrowserWindow {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
-  mainWindow.webContents.openDevTools();
   mainWindow.setMenu(null);
 
   return mainWindow;
@@ -101,6 +106,11 @@ ipcMain.handle("yt-dlp:download", async (_event, opts) => {
 // Now returns the user's configured folder so existing callers stay consistent.
 ipcMain.handle("app:downloads-path", () => {
   return getDownloadFolder();
+});
+
+// Returns the path to the main process log file.
+ipcMain.handle("app:log-file-path", () => {
+  return getLogFilePath();
 });
 
 // Returns the user's current download folder preference (defaults to OS Downloads).
