@@ -1,6 +1,6 @@
 {
   "name": "getmedia",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "description": "Download videos and audio from YouTube and other platforms",
   "author": {

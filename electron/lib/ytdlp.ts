@@ -282,29 +282,32 @@ export function downloadMedia(opts: DownloadOptions): Promise<DownloadResult> {
       const height = opts.quality?.replace("p", "");
 
       if (useWebmNative && ext === "webm") {
-        // WebM-native: prefer WebM streams so we can losslessly merge
+        // WebM-native: prefer WebM streams so we can losslessly merge.
+        // Always respect the user's chosen quality.
         args.push(
           "-f",
           height
-            ? `bestvideo[ext=webm][height<=${height}]+bestaudio[ext=webm]/bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            ? `bestvideo[ext=webm][height<=${height}]+bestaudio[ext=webm]/bestvideo[ext=webm][height<=${height}]+bestaudio/best[height<=${height}]`
             : `bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo+bestaudio/best`,
         );
         args.push("--merge-output-format", ext);
       } else if (ext === "webm") {
-        // Fallback for WebM: download any format, then recode to WebM
+        // Fallback for WebM: download any format, then recode to WebM.
+        // Always respect the user's chosen quality.
         args.push(
           "-f",
           height
-            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]`
             : `bestvideo+bestaudio/best`,
         );
         args.push("--recode-video", ext);
       } else {
-        // Non-WebM formats
+        // Non-WebM formats.
+        // Always respect the user's chosen quality.
         args.push(
           "-f",
           height
-            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+            ? `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]`
             : `bestvideo+bestaudio/best`,
         );
         const isNativeFormat = ext === "mp4";
