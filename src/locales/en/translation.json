@@ -21,7 +21,7 @@
     "invalidLink": "Paste a valid link before downloading",
     "sectionAria": "Quick download",
     "sectionTitle": "Quick download",
-    "success": "\"{{filename}}\" saved to Downloads folder!",
+    "success": "\"{{filename}}\" saved to \"{{filePath}}\" folder!",
     "typeAria": "Download type",
     "urlLabel": "Video link",
     "urlPlaceholder": "https://www.youtube.com/watch?v=...",

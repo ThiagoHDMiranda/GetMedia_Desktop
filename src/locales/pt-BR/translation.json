@@ -21,7 +21,7 @@
     "invalidLink": "Cole um link válido antes de baixar",
     "sectionAria": "Download rápido",
     "sectionTitle": "Download rápido",
-    "success": "\"{{filename}}\" salvo na pasta Downloads!",
+    "success": "\"{{filename}}\" salvo na pasta \"{{filePath}}\"!",
     "typeAria": "Tipo de download",
     "urlLabel": "Link do vídeo",
     "urlPlaceholder": "https://www.youtube.com/watch?v=...",

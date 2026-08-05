@@ -161,7 +161,18 @@ export default function App() {
 
       // The file is already saved to disk by the Electron main process.
       const filename = result.filename || "download";
-      showToast("successType", t("download.success", { filename: filename }));
+      
+      let folderName = "";
+      if (result.filePath) {
+        // Extract the directory path, then get the last segment (the folder name)
+        const parts = result.filePath.split(/[/\\]/);
+        if (parts.length > 1) {
+          // The last element is the filename, so the second to last is the folder name
+          folderName = parts[parts.length - 2];
+        }
+      }
+      
+      showToast("successType", t("download.success", { filename: filename, filePath: folderName }));
 
       if (historyId) {
         try {
