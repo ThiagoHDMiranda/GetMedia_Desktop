@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Settings, ChevronDown } from "lucide-react";
+import { Settings, ChevronDown, Tv2, Eye, ThumbsUp, Link, MessageCircle } from "lucide-react";
 import { TypeContainer } from "./TypeContainer";
 import { ButtonComponent } from "@/components/button-component/ButtonComponent";
 import type { FileDownloadType } from "@/types/file-download-type";
@@ -112,7 +112,7 @@ export function FileInformation({
               )}
               {videoInfo.channel && (
                 <p className="text-sm text-[var(--text-secondary)]">
-                  📺 {videoInfo.channel}
+                  <Tv2 className="w-4 h-4 inline mr-1.5"/> {videoInfo.channel}
                 </p>
               )}
 
@@ -120,19 +120,19 @@ export function FileInformation({
               <div className="flex flex-wrap gap-4 text-sm">
                 {videoInfo.view_count != null && (
                   <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <span>👁</span>
+                    <span><Eye className="w-4 h-4 inline mr-1.5" /></span>
                     <span>{formatNumber(videoInfo.view_count)} visualizações</span>
                   </div>
                 )}
                 {videoInfo.like_count != null && (
                   <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <span>👍</span>
+                    <span><ThumbsUp className="w-4 h-4 inline mr-1.5"/></span>
                     <span>{formatNumber(videoInfo.like_count)}</span>
                   </div>
                 )}
                 {videoInfo.comment_count != null && (
                   <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <span>💬</span>
+                    <span><MessageCircle className="w-4 h-4 inline mr-1.5"/></span>
                     <span>{formatNumber(videoInfo.comment_count)}</span>
                   </div>
                 )}
@@ -145,7 +145,7 @@ export function FileInformation({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors"
                 >
-                  🔗 {t("fileInfo.openOriginal")}
+                  <Link className="w-4 h-4 inline mr-1.5"/> {t("fileInfo.openOriginal")}
                 </a>
               )}
             </div>

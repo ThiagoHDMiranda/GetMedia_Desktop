@@ -1,4 +1,4 @@
-import { X, Info, Scale } from "lucide-react";
+import { X, Info, Scale, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { APP_INFO } from "@/lib/app-info";
 
@@ -77,7 +77,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <div className="grid grid-cols-1 gap-3">
             {/* Author */}
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-surface-border bg-surface-muted">
-              <span className="text-lg">👤</span>
+              <span className="text-lg"><UserRound className="w-[18px] h-[18px] text-brand-400 flex-shrink-0"/></span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                   {t("about.author")}

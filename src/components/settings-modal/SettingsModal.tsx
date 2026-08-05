@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { X, Globe, Sun, Moon, RefreshCw, Download, RotateCw } from "lucide-react";
+import { X, Globe, Sun, Moon, RefreshCw, Download, RotateCw, SunMoon } from "lucide-react";
 import { DownloadFolder } from "@/components/download-folder/DownloadFolder";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { useTheme, SUPPORTED_THEMES, type Theme } from "@/hooks/useTheme";
@@ -81,7 +81,7 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
           {/* Theme selector */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-              <Sun className="w-4 h-4" />
+              <SunMoon className="w-4 h-4" />
               {t("settings.themeLabel")}
             </label>
             <div className="flex gap-2">
