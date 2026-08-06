@@ -134,6 +134,9 @@
     "downloaded": "Update downloaded — restart now to install",
     "restart": "Restart now",
     "failed": "Update check failed",
-    "initial": "Check for updates"
+    "initial": "Check for updates",
+    "toastAvailable": "New version {{version}} is available!",
+    "toastDownload": "Download",
+    "toastLater": "Later"
   }
 }

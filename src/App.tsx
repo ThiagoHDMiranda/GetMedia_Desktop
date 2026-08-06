@@ -8,6 +8,7 @@ import { AboutModal } from "@/components/about-modal/AboutModal";
 import { HistoryModal } from "@/components/history-modal/HistoryModal";
 import { FileInformation } from "@/components/file-information/FileInformation";
 import { ToastNotification } from "@/components/toast-notification/ToastNotification";
+import { UpdateNotification } from "@/components/update-notification/UpdateNotification";
 import type { FileDownloadType, DefaultConfig } from "@/types/file-download-type";
 import type { VideoInfo } from "@/types/video-info";
 import type { HistoryEntryInput } from "@/types/history";
@@ -223,7 +224,7 @@ export default function App() {
       </div>
       <div className="mx-auto max-w-5xl px-4 py-12 space-y-12 relative">
         {/* Top-bar buttons — fixed right cluster (History + About + Settings) */}
-        <div className="fixed top-6 right-6 z-40 flex items-center gap-2">
+        <div className="fixed top-6 right-6 z-30 flex items-center gap-2">
           {/* History button */}
           <button
             id="history-btn"
@@ -300,6 +301,17 @@ export default function App() {
 
       {/* History modal */}
       <HistoryModal isOpen={historyOpen} onClose={() => setHistoryOpen(false)} />
+
+      {/* Auto-update notification — shows when the automatic check finds an update.
+          Hidden when Settings is open (Settings already shows the update UI). */}
+      {/* {!settingsOpen && ( */}
+        <UpdateNotification
+          updater={updater}
+          onDownload={() => {
+            setSettingsOpen(true);
+          }}
+        />
+      {/* )} */}
 
       {/* Toast */}
       {toast && (

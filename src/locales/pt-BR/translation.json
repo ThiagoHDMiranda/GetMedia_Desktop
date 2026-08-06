@@ -134,6 +134,9 @@
     "downloaded": "Baixado — reinicie para instalar",
     "restart": "Reiniciar agora",
     "failed": "Erro ao verificar atualização",
-    "initial": "Verificar atualizações"
+    "initial": "Verificar atualizações",
+    "toastAvailable": "Nova versão {{version}} disponível!",
+    "toastDownload": "Baixar",
+    "toastLater": "Mais tarde"
   }
 }
