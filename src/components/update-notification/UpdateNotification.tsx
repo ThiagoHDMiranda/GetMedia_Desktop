@@ -73,7 +73,7 @@ export function UpdateNotification({ updater, onDownload }: UpdateNotificationPr
             <button
               id="update-toast-download-btn"
               onClick={onDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 border border-brand-400 text-white/90 hover:bg-brand-600 transition-all duration-150"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 border border-brand-400 text-white/80 hover:bg-brand-600 transition-all duration-150"
             >
               <Download className="w-3.5 h-3.5" />
               {t("update.toastDownload")}
@@ -81,7 +81,7 @@ export function UpdateNotification({ updater, onDownload }: UpdateNotificationPr
             <button
               id="update-toast-later-btn"
               onClick={() => setDismissed(true)}
-              className="flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border border-surface-border bg-surface-muted text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-brand-400/40 transition-all duration-150"
+              className="flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border border-surface-border bg-surface-muted text-[var(--text-secondary)] hover:text-brand-400 hover:border-brand-400/40 transition-all duration-150"
             >
               {t("update.toastLater")}
             </button>
