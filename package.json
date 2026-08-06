@@ -1,6 +1,6 @@
 {
   "name": "getmedia",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "description": "Download videos and audio from YouTube and other platforms",
   "author": {
@@ -84,7 +84,17 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "GetMedia-Setup-${version}.${ext}"
+      "artifactName": "GetMedia-Setup-${version}.${ext}",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "public/getmedia_icon_256x256.ico",
+      "uninstallerIcon": "public/getmedia_icon_256x256.ico",
+      "shortcutName": "GetMedia"
     }
   }
 }
