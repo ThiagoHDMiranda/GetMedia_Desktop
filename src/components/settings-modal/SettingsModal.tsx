@@ -166,8 +166,35 @@ export function SettingsModal({ isOpen, onClose, updater }: SettingsModalProps) 
 
               {updater.status === "available" && (
                 <div className="space-y-3">
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    {t("update.available", { version: updater.updateVersion ?? "" })}
+                  <p className="text-sm text-[var(--text-secondary)] whitespace-pre-line">
+                    {(() => {
+                      let sizeStr = t("unknown");
+                      if (typeof updater.updateSize === "number") {
+                        const mb = updater.updateSize / (1024 * 1024);
+                        sizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${Math.round(updater.updateSize / 1024)} KB`;
+                      }
+
+                      let dateStr = t("unknown");
+                      if (updater.updateReleaseDate) {
+                        try {
+                          const date = new Date(updater.updateReleaseDate);
+                          // simple local formatting
+                          dateStr = date.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          });
+                        } catch {
+                          dateStr = String(updater.updateReleaseDate);
+                        }
+                      }
+
+                      return t("update.available", {
+                        version: updater.updateVersion ?? "",
+                        date: dateStr,
+                        size: sizeStr,
+                      });
+                    })()}
                   </p>
                   <button
                     id="update-download-btn"

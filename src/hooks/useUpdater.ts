@@ -14,6 +14,10 @@ export interface UseUpdaterReturn {
   status: UpdaterStatus;
   /** Version string of the available update (e.g. "2.0.0"). */
   updateVersion: string | null;
+  /** File size of the update in bytes (null if unknown). */
+  updateSize: number | null;
+  /** Release date of the update as a string (null if unknown). */
+  updateReleaseDate: string | null;
   /** Download progress percentage (0–100), only valid when status === "downloading". */
   progress: number;
   /** Error message when status === "error". */
@@ -30,6 +34,8 @@ export function useUpdater(): UseUpdaterReturn {
   const { t } = useTranslation();
   const [status, setStatus] = useState<UpdaterStatus>("idle");
   const [updateVersion, setUpdateVersion] = useState<string | null>(null);
+  const [updateSize, setUpdateSize] = useState<number | null>(null);
+  const [updateReleaseDate, setUpdateReleaseDate] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const listenersRef = useRef(false);
@@ -43,6 +49,14 @@ export function useUpdater(): UseUpdaterReturn {
 
     api.onUpdateAvailable((info: any) => {
       setUpdateVersion(info?.version ?? null);
+      setUpdateReleaseDate(info?.releaseDate ?? null);
+      
+      // info.files is an array of files. We try to find the size of the main exe or use the first file's size.
+      let size: number | null = null;
+      if (Array.isArray(info?.files) && info.files.length > 0) {
+        size = info.files[0]?.size ?? null;
+      }
+      setUpdateSize(size);
       setStatus("available");
     });
 
@@ -61,6 +75,12 @@ export function useUpdater(): UseUpdaterReturn {
 
     api.onUpdateDownloaded((info: any) => {
       setUpdateVersion(info?.version ?? updateVersion);
+      setUpdateReleaseDate(info?.releaseDate ?? null);
+      let size: number | null = null;
+      if (Array.isArray(info?.files) && info.files.length > 0) {
+        size = info.files[0]?.size ?? null;
+      }
+      setUpdateSize(size);
       setStatus("downloaded");
       setProgress(100);
     });
@@ -111,6 +131,8 @@ export function useUpdater(): UseUpdaterReturn {
   return {
     status,
     updateVersion,
+    updateSize,
+    updateReleaseDate,
     progress,
     errorMessage,
     checkForUpdates,

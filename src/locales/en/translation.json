@@ -127,7 +127,7 @@
   "update": {
     "check": "Check for updates",
     "checking": "Checking for updates...",
-    "available": "Update {{version}} available",
+    "available": "Update {{version}} available\nReleased: {{date}}\nSize: {{size}}",
     "notAvailable": "You are on the latest version",
     "download": "Download update",
     "downloading": "Downloading update: {{progress}}%",
